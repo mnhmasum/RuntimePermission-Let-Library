@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 
 import com.canelmas.let.AskPermission;
 import com.canelmas.let.DeniedPermission;
+import com.canelmas.let.Let;
 import com.canelmas.let.RuntimePermissionListener;
 import com.canelmas.let.RuntimePermissionRequest;
 
@@ -77,7 +80,14 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        Let.handle(this, requestCode, permissions, grantResults);
+    }
+
+    @Override
     public void onShowPermissionRationale(List<String> permissionList, final RuntimePermissionRequest permissionRequest) {
+        Toast.makeText(this, "" + permissionList.get(0), Toast.LENGTH_SHORT).show();
+
         final StringBuilder sb = new StringBuilder();
 
         for (String permission : permissionList) {
@@ -105,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
 
     @Override
     public void onPermissionDenied(List<DeniedPermission> deniedPermissionList) {
+
+        Log.e("GRANT", "TEST" );
         final StringBuilder sb = new StringBuilder();
 
         for (DeniedPermission result : deniedPermissionList) {
@@ -115,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements RuntimePermission
         }
 
         if (sb.length() != 0) {
-            new AlertDialog.Builder(this).setTitle("Go Settings and Grant Permission")
+            new AlertDialog.Builder(this).setTitle("Go Settings ->  Apps -> MyApp -> Permissions  and Grant Permission")
                     .setMessage(sb.toString())
                     .setCancelable(true)
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
